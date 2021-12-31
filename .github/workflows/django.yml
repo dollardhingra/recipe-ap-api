@@ -14,7 +14,26 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: [3.7]
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres:10-alpine
+        # Provide the password for postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: supersecretpassword
+          POSTGRES_DB: app
 
+        ports:
+          - 5432:5432
+
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
     - uses: actions/checkout@v2
     - name: Build docker image
